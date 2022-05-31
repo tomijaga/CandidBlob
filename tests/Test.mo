@@ -1,5 +1,7 @@
 import Debug "mo:base/Debug";
 import Blob "mo:base/Blob";
+import Float "mo:base/Float";
+import Int "mo:base/Int";
 import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Nat32 "mo:base/Nat32";
@@ -9,7 +11,7 @@ import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 
 import Hex "mo:encoding/Hex";
-
+import Candy "mo:candy_library/types";
 
 import Cbor "../src";
 import TestVectors "TestVectors";
@@ -20,6 +22,17 @@ type Group = ActorSpec.Group;
 let {
     assertTrue; assertFalse; assertAllTrue; describe; it; skip; pending; run
 } = ActorSpec;
+
+func unwrap_candy(candy: Result.Result<Cbor.CandyValue, ()>):Cbor.CandyValue {
+  switch(candy){
+    case(#ok(candy)){
+      candy
+    };
+    case(_){
+      #Empty
+    };
+  }
+};
 
 func unwrap_blob(blob: Result.Result<Blob, Any>):Blob {
   switch(blob){
@@ -43,7 +56,7 @@ func unwrap_bytes(bytes: Result.Result<[Nat8], Any>):[Nat8] {
   }
 };
 
-func validate_blob(blob: Blob, hex: Text): Bool {
+func assert_blob(blob: Blob, hex: Text): Bool {
   let bytes = unwrap_bytes(Hex.decode(hex));
   let testBlob = Blob.fromArray(bytes);
 
@@ -65,7 +78,7 @@ func run_testcase<T>(arr: [Test<T>], mapFn: (T)-> Cbor.CandyValue ): Bool {
       for (i in Iter.range(0, arr.size() - 1)){
         let {hex; decoded} = arr[i];
         let blob = unwrap_blob(Cbor.encode(mapFn(decoded)));
-        results.add(validate_blob(blob, hex));
+        results.add(assert_blob(blob, hex));
       };
       assertAllTrue(results.toArray());
 };
@@ -108,31 +121,50 @@ let success = run([
       }),
       it("Bool (false)", do{
         let blob = unwrap_blob(Cbor.encode(#Bool(false)));
-        validate_blob(blob, "f4")
+        assert_blob(blob, "f4")
       }),
       it("Bool (true)", do{
         let blob = unwrap_blob(Cbor.encode(#Bool(true)));
-        validate_blob(blob, "f5")
+        assert_blob(blob, "f5")
       }),
       it("Empty", do{
         let blob = unwrap_blob(Cbor.encode(#Empty));
-        validate_blob(blob, "f6")
-      })
-    ]),
-    describe("Encode", [
-      it("Bytes", do {
-        let arr: [Nat8] = [0x63, 0x62, 0x6F, 0x72 ];
-        let blob = unwrap_blob(Cbor.encode(#Bytes(#frozen(arr))));
-        let testBlob = Blob.fromArray([0x42, 0x18, 0x63, 0x18,0x62, 0x18,0x6F, 0x18, 0x72 ]);
-
-        assertTrue(validate_blob(blob, ""));
+        assert_blob(blob, "f6")
       }),
-      it("Blob", do{
-        let blob = unwrap_blob(Cbor.encode(#Float 23.4556));
-
-        assertTrue(validate_blob(blob, "FB403774A2339C0EBF"));
+      it("Nats", do{
+        let tests = TestVectors.testVectors.nats;
+        run_testcase<[Nat]>(tests, func(decoded){#Nats(#frozen(decoded))})
+      }),
+      it("Text", do{
+        let tests = TestVectors.testVectors.text;
+        run_testcase<Text>(tests, func(decoded){#Text(decoded)})
+      }),
+      it("Class/Map", do{
+        let tests = TestVectors.testVectors.map;
+        run_testcase<[Candy.Property]>(tests, func(decoded){#Class(decoded)})
       })
     ]),
+    describe("Float", [
+      it("Float", do{
+        let f = 3.23;
+        let i = Float.toInt(f);
+        let  nf = Float.fromInt(i) ;
+
+        Debug.print(debug_show (f, i, nf, Float.toInt(f * 10_000_000_000_000_000)));
+        
+        assertTrue(nf == f)
+      })
+    ]),
+  ]),
+
+  describe("Decode", [
+    it("Nat8", do {
+
+      let blob = Blob.fromArray([0]);
+      let candy_value = unwrap_candy(Cbor.decode(blob));
+
+      assertTrue(candy_value == #Nat8(0));
+    })
   ]),
 ]);
 

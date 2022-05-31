@@ -7,6 +7,7 @@ import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Int8 "mo:base/Int8";
 import Int "mo:base/Int";
+import Text "mo:base/Text";
 import Int16 "mo:base/Int16";
 import Int32 "mo:base/Int32";
 import Int64 "mo:base/Int64";
@@ -18,7 +19,10 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 
 import Candy "mo:candy_library/types";
+
+import Utils "Utils";
 //https://docs.rs/crate/cbor/latest/source/src/decoder.rs
+
 module {
     type CandyValue = Candy.CandyValue;
     type CandyValueUnstable = Candy.CandyValueUnstable;
@@ -92,7 +96,6 @@ module {
             case(#Int64(n)){
                 encode_int(buf, Int64.toInt(n));
             };
-
             // encoding double precision floating point
             case(#Float(f)){
                 // encode_float(buf, f);
@@ -100,30 +103,27 @@ module {
 
             // only encodes utf8
             case (#Text(t)){
-                //encode text size
                 encode_num(buf, t.size(), 3);
-                for (c in t.chars()){
-                    let n32 = Char.toNat32(c);
-                    if (n32 < 0x80){
-                        let n = Nat32.toNat(n32);
-                        buf.add(Nat8.fromNat(n));
-                    }else{
-                        return #err("Invalid char '" # Char.toText(c) # "' in " #"\"" # t #"\"");
-                    };
-                };
+                let b = Text.encodeUtf8(t);
+                let arr = Blob.toArray(b);
+                buf.append(Utils.arrayToBuffer(arr));
+
             };
+
             case (#Nats(candyArr)){
                 let result = encode_array<Nat>(buf, candyArr, func(n){ #Nat(n)});
                 if (Result.isErr(result)){
                     return result;
                 };
             };
+
             case (#Array(candyArr)){
                 let result = encode_array<CandyValue>(buf, candyArr, func(val){ val});
                 if (Result.isErr(result)){
                     return result;
                 };
             };
+
             case(#Floats(_)){
                 // encode_float(buf, f);
             };
@@ -158,10 +158,12 @@ module {
                     };
                 };
             };
+
             case (#Principal(p)){
-                let pBlob = Principal.toBlob(p);
-                ignore encode_into_buf(buf, #Blob(pBlob));
+                let p_as_blob = Principal.toBlob(p);
+                ignore encode_into_buf(buf, #Blob(p_as_blob));
             };
+
             case (#Option(optValue)){
                 switch(optValue){
                     case(?val){

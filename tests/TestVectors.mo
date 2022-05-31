@@ -1,7 +1,9 @@
+import Candy "mo:candy_library/types";
+
 module{
     type Test<T> = {
-    hex: Text;
-    decoded: T
+        hex: Text;
+        decoded: T
     };
 
     public let testVectors = {
@@ -308,282 +310,151 @@ module{
     //     //     roundtrip= true;
     //     //     "diagnostic"= "h'01020304'"
     //     // },
-    //     {
-    //         hex= "60";
-    //         roundtrip= true;
-    //         decoded= ""
-    //     },
-    //     {
-    //         hex= "6161";
-    //         roundtrip= true;
-    //         decoded= "a"
-    //     },
-    //     {
-    //         hex= "6449455446";
-    //         roundtrip= true;
-    //         decoded= "IETF"
-    //     },
-    //     {
-    //         hex= "62225c";
-    //         roundtrip= true;
-    //         decoded= "\"\\"
-    //     },
-    //     {
-    //         hex= "62c3bc";
-    //         roundtrip= true;
-    //         decoded= "ü"
-    //     },
-    //     {
-    //         hex= "63e6b0b4";
-    //         roundtrip= true;
-    //         decoded= "水"
-    //     },
-    //     {
-    //         hex= "64f0908591";
-    //         roundtrip= true;
-    //         decoded= "𐅑"
-    //     },
-    //     {
-    //         hex= "80";
-    //         roundtrip= true;
-    //         decoded= [
 
-    //         ]
-    //     },
-    //     {
-    //         hex= "83010203";
-    //         roundtrip= true;
-    //         decoded= [
-    //         1,
-    //         2,
-    //         3
-    //         ]
-    //     },
-    //     {
-    //         hex= "8301820203820405";
-    //         roundtrip= true;
-    //         decoded= [
-    //         1,
-    //         [
-    //             2,
-    //             3
-    //         ],
-    //         [
-    //             4,
-    //             5
-    //         ]
-    //         ]
-    //     },
-    //     {
-    //         hex= "98190102030405060708090a0b0c0d0e0f101112131415161718181819";
-    //         roundtrip= true;
-    //         decoded= [
-    //         1,
-    //         2,
-    //         3,
-    //         4,
-    //         5,
-    //         6,
-    //         7,
-    //         8,
-    //         9,
-    //         10,
-    //         11,
-    //         12,
-    //         13,
-    //         14,
-    //         15,
-    //         16,
-    //         17,
-    //         18,
-    //         19,
-    //         20,
-    //         21,
-    //         22,
-    //         23,
-    //         24,
-    //         25
-    //         ]
-    //     },
-    //     {
-    //         hex= "a0";
-    //         roundtrip= true;
-    //         decoded= {
-    //         }
-    //     },
-    //     // {
-    //     //     hex= "a201020304";
-    //     //     roundtrip= true;
-    //     //     "diagnostic"= "{1= 2, 3= 4}"
-    //     // },
-    //     {
-    //         hex= "a26161016162820203";
-    //         roundtrip= true;
-    //         decoded= {
-    //         "a"= 1,
-    //         "b"= [
-    //             2,
-    //             3
-    //         ]
-    //         }
-    //     },
-    //     {
-    //         hex= "826161a161626163";
-    //         roundtrip= true;
-    //         decoded= [
-    //         "a";
-    //         {
-    //             "b"= "c"
-    //         }
-    //         ]
-    //     },
-    //     {
-    //         hex= "a56161614161626142616361436164614461656145";
-    //         roundtrip= true;
-    //         decoded= {
-    //         "a"= "A";
-    //         "b"= "B";
-    //         "c"= "C";
-    //         "d"= "D";
-    //         "e"= "E"
-    //         }
-    //     },
-    //     // {
-    //     //     hex= "5f42010243030405ff";
-    //     //     roundtrip= false;
-    //     //     "diagnostic"= "(_ h'0102', h'030405')"
-    //     // },
-    //     {
-    //         hex= "7f657374726561646d696e67ff";
-    //         roundtrip= false;
-    //         decoded= "streaming"
-    //     },
-    //     {
-    //         hex= "9fff";
-    //         roundtrip= false;
-    //         decoded= [
+        text:[Test<Text>] = [
+            {
+                hex= "60";
+                roundtrip= true;
+                decoded = ""
+            },
+            {
+                hex= "6161";
+                roundtrip= true;
+                decoded= "a"
+            },
+            {
+                hex= "6449455446";
+                roundtrip= true;
+                decoded= "IETF"
+            },
+            {
+                hex= "62225c";
+                roundtrip= true;
+                decoded= "\"\\"
+            },
+            
 
-    //         ]
-    //     },
-    //     {
-    //         hex= "9f018202039f0405ffff";
-    //         roundtrip= false;
-    //         decoded= [
-    //         1,
-    //         [
-    //             2,
-    //             3
-    //         ],
-    //         [
-    //             4,
-    //             5
-    //         ]
-    //         ]
-    //     },
-    //     {
-    //         hex= "9f01820203820405ff";
-    //         roundtrip= false;
-    //         decoded= [
-    //         1,
-    //         [
-    //             2,
-    //             3
-    //         ],
-    //         [
-    //             4,
-    //             5
-    //         ]
-    //         ]
-    //     },
-    //     {
-    //         hex= "83018202039f0405ff";
-    //         roundtrip= false;
-    //         decoded= [
-    //         1,
-    //         [
-    //             2,
-    //             3
-    //         ],
-    //         [
-    //             4,
-    //             5
-    //         ]
-    //         ]
-    //     },
-    //     {
-    //         hex= "83019f0203ff820405";
-    //         roundtrip= false;
-    //         decoded= [
-    //         1,
-    //         [
-    //             2,
-    //             3
-    //         ],
-    //         [
-    //             4,
-    //             5
-    //         ]
-    //         ]
-    //     },
-    //     {
-    //         hex= "9f0102030405060708090a0b0c0d0e0f101112131415161718181819ff";
-    //         roundtrip= false;
-    //         decoded= [
-    //         1,
-    //         2,
-    //         3,
-    //         4,
-    //         5,
-    //         6,
-    //         7,
-    //         8,
-    //         9,
-    //         10,
-    //         11,
-    //         12,
-    //         13,
-    //         14,
-    //         15,
-    //         16,
-    //         17,
-    //         18,
-    //         19,
-    //         20,
-    //         21,
-    //         22,
-    //         23,
-    //         24,
-    //         25
-    //         ]
-    //     },
-    //     {
-    //         hex= "bf61610161629f0203ffff";
-    //         roundtrip= false;
-    //         decoded= {
-    //         "a"= 1,
-    //         "b"= [
-    //             2,
-    //             3
-    //         ]
-    //         }
-    //     },
-    //     {
-    //         hex= "826161bf61626163ff";
-    //         roundtrip= false;
-    //         decoded= [
-    //         "a";
-    //         {
-    //             "b"= "c"
-    //         }
-    //         ]
-    //     },
-    //     {
-    //         hex= "bf6346756ef563416d7421ff";
-    //         roundtrip= false;
-    //         decoded= {
-    //         "Fun"= true;
-    //         "Amt"= -2
-    //         }
-    //     }]
+            // not utf8
+            // {
+            //     hex= "62c3bc";
+            //     roundtrip= true;
+            //     decoded= "ü"
+            // },
+            // {
+            //     hex= "63e6b0b4";
+            //     roundtrip= true;
+            //     decoded= "水"
+            // },
+            // {
+            //     hex= "64f0908591";
+            //     roundtrip= true;
+            //     decoded= "𐅑"
+            // },
+        ];
+            
+        nats = [
+            {
+                hex = "80";
+                roundtrip = true;
+                decoded = [ ]
+            },
+            {
+                hex = "83010203";
+                roundtrip = true;
+                decoded = [ 1, 2, 3 ]
+            },
+            // {
+            //     hex= "7f657374726561646d696e67ff";
+            //     roundtrip= false;
+            //     decoded= "streaming"
+            // },
+            {
+                hex = "98190102030405060708090a0b0c0d0e0f101112131415161718181819";
+                roundtrip = true;
+                decoded = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ]
+            }
+        ];
+
+        // arr:[Test<Any>] = [
+        //     {
+        //         hex= "826161bf61626163ff";
+        //         roundtrip= false;
+        //         decoded= [ "a", [{name = "b"; value = "c"; immutable = true}] ]
+        //     },
+        //     {
+        //         hex = "8301820203820405";
+        //         roundtrip = true;
+        //         decoded = [1, #Nats(#frozen([2, 3])), #Nats(#frozen([4,  5]))]
+        //     },
+         // {
+            //     hex= "826161a161626163";
+            //     roundtrip= true;
+            //     decoded= [
+            //         {
+            //             name = "a" ; 
+            //             value = #Class([
+            //                 {name = "b"; value = #Text("c"); immutable = true},
+            //             ]); 
+            //             immutable = true
+            //         },
+            //     ]
+            // },
+        // ];
+
+        candidArr:[Test<Any>] = [];
+
+        map:[Test<[Candy.Property]>] = [
+            {
+                hex = "a0";
+                roundtrip = true;
+                decoded = []
+            },
+            {
+                hex= "A2613102613304";
+                roundtrip = true;
+                decoded = [
+                    {name = "1"; value = #Nat(2); immutable = true},
+                    {name = "3"; value = #Nat(4); immutable = true}
+                ];
+            },
+            {
+                hex= "a26161016162820203";
+                roundtrip= true;
+                decoded= [
+                    {name = "a" ; value = #Nat(1); immutable = true},
+                    {name = "b" ; value = #Nats(#frozen([2, 3])); immutable = true}
+                ]
+            },
+            {
+                hex= "a56161614161626142616361436164614461656145";
+                roundtrip= true;
+                decoded= [
+                    {name = "a"; value = #Text("A"); immutable = true},
+                    {name = "b"; value = #Text("B"); immutable = true},
+                    {name = "c"; value = #Text("C"); immutable = true},
+                    {name = "d"; value = #Text("D"); immutable = true},
+                    {name = "e"; value = #Text("E"); immutable = true},
+                ]
+            },
+            // {
+            //     hex= "bf61610161629f0203ffff";
+            //     roundtrip= false;
+            //     decoded= [
+            //         {name = "a" ; value = 1; immutable = true},
+            //         {name = "b" ; value = [2, 3]; immutable = true}
+            //     ]
+            // },
+            
+            // {
+            //     hex= "bf6346756ef563416d7421ff";
+            //     roundtrip= false;
+            //     decoded= [
+            //         {name = "Fun"; value = #Bool(true); immutable = true},
+            //         {name = "Amt"; value = #Int(-2); immutable = true},
+            //     ]
+
+            // }
+        ];
+        
     }
 }
