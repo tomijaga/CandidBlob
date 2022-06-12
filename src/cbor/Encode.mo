@@ -37,7 +37,7 @@ module {
     };
 
     public func encode(data: CandyValue): Result.Result<Blob, Text> {
-        let buf = Utils.arrayToBuffer<Nat8>([0x44, 0x49, 0x44, 0x4C]);
+        let buf = Buffer.Buffer<Nat8>(0);
         let result = encode_into_buf(buf: Buffer.Buffer<Nat8>, data);
 
         switch(result){
@@ -73,9 +73,7 @@ module {
                 encode_nat(buf, Nat8.toNat(n));
             };
             case(#Nat16(n)){
-                let b: Nat = 11;
-                encode_nat(buf, b);
-                encode_nat(buf, Nat16.toNat( n ));
+                encode_nat(buf, Nat16.toNat(n));
             };
             case(#Nat32(n)){
                 encode_nat(buf, Nat32.toNat(n));
@@ -183,10 +181,6 @@ module {
         return #ok(); 
     };
 
-    // func leb(): {
-
-    // };
-
     func encode_array<T>(buf: Buffer.Buffer<Nat8>, candyArr: CandyArraySubType<T>, mapFn: (T)-> CandyValue): Result.Result<(), Text>{
         let arr = unwrap_array<T>(candyArr);
 
@@ -252,8 +246,31 @@ module {
 
     // negative numbers are encoded using two's complement
     func encode_num(buf: Buffer.Buffer<Nat8>, n: Nat, pos: Nat8){
+        let major:Nat8 = pos << 5;
         let bytes = num_as_bytes(Nat64.fromNat(n));
-        
+
+        switch(bytes.size()){
+            case(1){
+                let byte = bytes.get(0);
+
+                if (byte >= 0x18 ){
+                    buf.add( major | 0x18 );
+                }else{
+                    buf.add( major | byte );
+                    return;
+                };
+            };
+            case(2){
+                buf.add( major | 0x19 );
+            };
+            case(4){
+                buf.add( major | 0x1A );
+            };
+            case(_){
+                buf.add( major | 0x1B )
+            };
+        };
+
         buf.append(bytes)
     };
 

@@ -10,6 +10,11 @@ let  additions =
       { name = "candy_library"
       , version = "v0.1.9"
       , repo = "https://github.com/aramakme/candy_library"
+      , dependencies = [ "base" ] : List Text
+      },
+      { name = "base"
+      , version = "master"
+      , repo = "https://github.com/dfinity/motoko-base"
       , dependencies = [] : List Text
       }
     ] : List Package

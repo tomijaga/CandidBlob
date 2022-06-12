@@ -1,6 +1,16 @@
 {
   "version": 1,
   "dfx": "0.10.0",
+  "canisters": {
+    "actor": {
+      "main": "example/src/motoko/Actor.mo",
+      "type": "motoko"
+    },
+    "caller": {
+      "main": "example/src/motoko/Caller.mo",
+      "type": "motoko"
+    }
+  },
   "defaults": {
     "build": {
       "packtool": "vessel sources",
